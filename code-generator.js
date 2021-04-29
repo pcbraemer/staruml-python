@@ -249,12 +249,17 @@ class PythonCodeGenerator {
       codeWriter.writeLine()
     }
 
-    // Class
-    line = 'class ' + elem.name
-
-    // Inherits
-    if (_inherits.length > 0) {
+    // Class & Inherits
+    if(elem.isAbstract==true& _inherits.length > 0){
+      line = 'class ' + elem.name + '(ABC, '
+      line +=  _inherits.map(function (e) { return e.name }).join(', ') + ')'
+    }else if(elem.isAbstract==true){
+      line = 'class ' + elem.name + '(ABC)'
+    }else if (_inherits.length > 0){
+      line = 'class ' + elem.name
       line += '(' + _inherits.map(function (e) { return e.name }).join(', ') + ')'
+    }else{
+      line = 'class ' + elem.name
     }
 
     codeWriter.writeLine(line + ':')
@@ -315,7 +320,7 @@ class PythonCodeGenerator {
   } else if (elem instanceof type.UMLClass & elem.isAbstract==true ) {
     fullPath = basePath + '/' + elem.name + '.py'
     codeWriter = new codegen.CodeWriter(this.getIndentString(options))
-    codeWriter.writeLine("testabstract")
+    codeWriter.writeLine("from abc import ABC")
     this.writeClass(codeWriter, elem, options)
     fs.writeFileSync(fullPath, codeWriter.getData())
     // Class
