@@ -311,14 +311,17 @@ class PythonCodeGenerator {
       elem.ownedElements.forEach(child => {
         this.generate(child, fullPath, options)
       })
-
+    //abstract Class
+  } else if (elem instanceof type.UMLClass & elem.isAbstract==true ) {
+    fullPath = basePath + '/' + elem.name + '.py'
+    codeWriter = new codegen.CodeWriter(this.getIndentString(options))
+    codeWriter.writeLine("testabstract")
+    this.writeClass(codeWriter, elem, options)
+    fs.writeFileSync(fullPath, codeWriter.getData())
     // Class
     } else if (elem instanceof type.UMLClass || elem instanceof type.UMLInterface) {
       fullPath = basePath + '/' + elem.name + '.py'
       codeWriter = new codegen.CodeWriter(this.getIndentString(options))
-      codeWriter.writeLine(options.installPath)
-      codeWriter.writeLine('# -*- coding: utf-8 -*-')
-      codeWriter.writeLine()
       this.writeClass(codeWriter, elem, options)
       fs.writeFileSync(fullPath, codeWriter.getData())
 
@@ -326,9 +329,6 @@ class PythonCodeGenerator {
     } else if (elem instanceof type.UMLEnumeration) {
       fullPath = basePath + '/' + elem.name + '.py'
       codeWriter = new codegen.CodeWriter(this.getIndentString(options))
-      codeWriter.writeLine(options.installPath)
-      codeWriter.writeLine('# -*- coding: utf-8 -*-')
-      codeWriter.writeLine()
       this.writeEnum(codeWriter, elem, options)
       fs.writeFileSync(fullPath, codeWriter.getData())
 
