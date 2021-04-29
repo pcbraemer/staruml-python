@@ -240,6 +240,9 @@ class PythonCodeGenerator {
     var _inherits = this.getInherits(elem)
 
     // Import
+    if(elem.isAbstract==true){
+      codeWriter.writeLine("from abc import ABC")
+    }
     if (_inherits.length > 0) {
       _inherits.forEach(function (e) {
         var _path = e.getPath(self.baseModel).map(function (item) { return item.name }).join('.')
@@ -316,13 +319,6 @@ class PythonCodeGenerator {
       elem.ownedElements.forEach(child => {
         this.generate(child, fullPath, options)
       })
-    //abstract Class
-  } else if (elem instanceof type.UMLClass & elem.isAbstract==true ) {
-    fullPath = basePath + '/' + elem.name + '.py'
-    codeWriter = new codegen.CodeWriter(this.getIndentString(options))
-    codeWriter.writeLine("from abc import ABC")
-    this.writeClass(codeWriter, elem, options)
-    fs.writeFileSync(fullPath, codeWriter.getData())
     // Class
     } else if (elem instanceof type.UMLClass || elem instanceof type.UMLInterface) {
       fullPath = basePath + '/' + elem.name + '.py'
